@@ -1,16 +1,21 @@
+from importlib import import_module
 from random import choice, uniform
 from typing import Callable
 
 import numpy as np
 from PIL import Image
 
-# Colors picked from the Nord theme [https://www.nordtheme.com/]
+# Configuration
+IFS_NAME = "golden_dragon"
+## Colors picked from the Nord theme [https://www.nordtheme.com/]
 COLORS_HEX = {0: "2e3440", 1: "ebcb8b"}
 RESOLUTION = (720, 1440)
 PADDING = 0
-
 ITERATIONS = 50
 POINTS = 500000
+
+# Internals
+IFS_PATH = "IFSs.{}"
 
 Vec = tuple[float, float]
 Map = Callable[[Vec], Vec]
@@ -79,31 +84,6 @@ def make_raster(
     return out
 
 
-def make_golden_dragon() -> IteratedFunctionSystem:
-    # https://larryriddle.agnesscott.org/ifs/heighway/goldenDragon.htm
-    phi = (1 + np.sqrt(5)) / 2
-    r = (1 / phi) ** (1 / phi)
-
-    def make_function(rotation: float, scaling: float, translation: Vec) -> Map:
-        cos = scaling * np.cos(rotation)
-        sin = scaling * np.sin(rotation)
-        dx, dy = translation
-
-        def map(point):
-            x, y = point
-            return (cos * x - sin * y + dx, sin * x + cos * y + dy)
-
-        return map
-
-    f1 = make_function(np.arccos((1 + r**2 - r**4) / (2 * r)), r, (0, 0))
-    f2 = make_function(
-        np.deg2rad(180) - np.arccos((1 + r**4 - r**2) / (2 * r**2)),
-        r**2,
-        (1, 0),
-    )
-    return [f1, f2]
-
-
 def size_window(min_window: Window, dim: tuple[int, int]) -> Window:
     """Pad the minimum window to have the same proportions as the target
     resolution.
@@ -129,17 +109,13 @@ def hex2color(hex: str) -> Color:
 
 
 if __name__ == "__main__":
-    # colors = {0: (46, 52, 64), 1: (76, 86, 106)}
-    size = 1.5 + 2 * PADDING
-    x, y = (-0.35 - PADDING, -0.55 - PADDING)
-
+    ifs_module = import_module(IFS_PATH.format(IFS_NAME))
+    ifs, min_window = ifs_module.get()
     high_res = (3 * RESOLUTION[0], 3 * RESOLUTION[1])
     colors = {k: hex2color(v) for k, v in COLORS_HEX.items()}
-    min_window = ((x, x + size), (y, y + size))
     (a, b), (c, d) = size_window(min_window, high_res)
     xs = np.linspace(a, b, high_res[0])
     ys = np.linspace(c, d, high_res[1])
-    ifs = make_golden_dragon()
     raster = make_raster(colors, (xs, ys), get_point, ifs)
     im = Image.fromarray(raster).resize(RESOLUTION)
     im.save("output.png")
