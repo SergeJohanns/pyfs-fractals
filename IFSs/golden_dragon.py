@@ -1,12 +1,6 @@
-from typing import Callable
-
 import numpy as np
 
-Vec = tuple[float, float]
-Map = Callable[[Vec], Vec]
-IteratedFunctionSystem = list[Map]
-Window = tuple[tuple[float, float], tuple[float, float]]
-IFSModule = tuple[IteratedFunctionSystem, Window]
+from . import IFSModule, IteratedFunctionSystem, Map, Vec
 
 
 def make_golden_dragon() -> IteratedFunctionSystem:

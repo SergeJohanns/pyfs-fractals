@@ -5,6 +5,8 @@ from typing import Callable
 import numpy as np
 from PIL import Image
 
+from IFSs import IteratedFunctionSystem, Vec, Window
+
 # Configuration
 IFS_NAME = "golden_dragon"
 ## Colors picked from the Nord theme [https://www.nordtheme.com/]
@@ -17,12 +19,8 @@ POINTS = 500000
 # Internals
 IFS_PATH = "IFSs.{}"
 
-Vec = tuple[float, float]
-Map = Callable[[Vec], Vec]
-IteratedFunctionSystem = list[Map]
 Color = tuple[int, int, int]
 Grid = tuple[np.ndarray, np.ndarray]
-Window = tuple[tuple[float, float], tuple[float, float]]
 
 
 def get_coordinates(grid: Grid, point: Vec) -> tuple[int, int]:
