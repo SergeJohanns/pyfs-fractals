@@ -94,8 +94,11 @@ def size_window(min_window: Window, dim: tuple[int, int]) -> Window:
     """
     (a, b), (c, d) = min_window
     x, y = dim
-    d_width = (x / y - 1) * (b - a) / 2 if x >= y else 0
-    d_height = (y / x - 1) * (d - c) / 2 if x < y else 0
+    d_x = (b - a) / x
+    d_y = (d - c) / y
+    print(d_x, d_y)
+    d_width = ((d - c) * x / y - (b - a)) / 2 if d_x <= d_y else 0
+    d_height = ((b - a) * y / x - (d - c)) / 2 if d_x > d_y else 0
     return (a - d_width, b + d_width), (c - d_height, d + d_height)
 
 
