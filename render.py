@@ -8,13 +8,13 @@ from PIL import Image
 from IFSs import IteratedFunctionSystem, Vec, Window
 
 # Configuration
-IFS_NAME = "golden_dragon"
+IFS_NAME = "levy_c_curve"
 ## Colors picked from the Nord theme [https://www.nordtheme.com/]
 COLORS_HEX = {0: "2e3440", 1: "ebcb8b"}
-RESOLUTION = (720, 1440)
+RESOLUTION = (1000, 1000)
 PADDING = 0
 ITERATIONS = 50
-POINTS = 500000
+POINTS = 1000000
 
 # Internals
 IFS_PATH = "IFSs.{}"
