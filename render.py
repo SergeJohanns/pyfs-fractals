@@ -18,6 +18,7 @@ POINTS = 500000
 
 # Internals
 IFS_PATH = "IFSs.{}"
+ZOOM = 3
 
 Color = tuple[int, int, int]
 Grid = tuple[np.ndarray, np.ndarray]
@@ -109,7 +110,7 @@ def hex2color(hex: str) -> Color:
 if __name__ == "__main__":
     ifs_module = import_module(IFS_PATH.format(IFS_NAME))
     ifs, min_window = ifs_module.get()
-    high_res = (3 * RESOLUTION[0], 3 * RESOLUTION[1])
+    high_res = (ZOOM * RESOLUTION[0], ZOOM * RESOLUTION[1])
     colors = {k: hex2color(v) for k, v in COLORS_HEX.items()}
     (a, b), (c, d) = size_window(min_window, high_res)
     xs = np.linspace(a, b, high_res[0])
