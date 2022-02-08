@@ -16,6 +16,12 @@ Window = tuple[tuple[float, float], tuple[float, float]]
 
 
 def get_coordinates(grid: Grid, point: Vec) -> tuple[int, int]:
+    """Get the coordinates of the pixel corresponding to a given point.
+
+    :param grid: The grid of pixels to get coordinates in.
+    :param point: The point in the plane whose pixel to get.
+    :returns: The coordinates of the pixel in the grid that contains the point.
+    """
     xs, ys = grid
     x_step = (xs[-1] - xs[0]) / len(xs)
     y_step = (ys[-1] - ys[0]) / len(ys)
@@ -25,6 +31,12 @@ def get_coordinates(grid: Grid, point: Vec) -> tuple[int, int]:
 
 
 def project(ifs: IteratedFunctionSystem, point: Vec) -> Vec:
+    """Project a point by repeatedly applying functions from the IFS.
+
+    :param ifs: The Iterated Function System to use for projection.
+    :param point: The point in the plane to repeatedly project.
+    :returns: A point obtained by applying random functions from the IFS.
+    """
     curr = point
     for _ in range(ITERATIONS):
         curr = choice(ifs)(curr)
@@ -37,6 +49,14 @@ def make_raster(
     get_point: Callable[[], Vec],
     ifs: IteratedFunctionSystem,
 ) -> np.ndarray:
+    """Create a raster image of the fractal.
+
+    :param colors: Dict mapping the assigned int to an appropriate color.
+    :param grid: The axes of the grid the fractal should be rendered in.
+    :param get_point: The distribution function for getting random points.
+    :param ifs: The Iterated Function System that generates the fractal.
+    :returns: A raster image of the fractal within the given grid.
+    """
     xs, ys = grid
     out = np.ndarray((len(ys), len(xs), 3), dtype=np.uint8)
     for j in range(len(ys)):
@@ -80,6 +100,14 @@ def make_golden_dragon() -> IteratedFunctionSystem:
 
 
 def size_window(min_window: Window, dim: tuple[int, int]) -> Window:
+    """Pad the minimum window to have the same proportions as the target
+    resolution.
+
+    :param min_window: Smallest allowable window resolution to ensure the entire
+        fractal is included and approximately centered.
+    :param dim: Resolution of the target window.
+    :returns: A window of the plane of the same proportions as the resolution.
+    """
     (a, b), (c, d) = min_window
     x, y = dim
     d_width = (x / y - 1) * (b - a) / 2 if x >= y else 0
