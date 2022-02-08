@@ -4,6 +4,11 @@ from typing import Callable
 import numpy as np
 from PIL import Image
 
+# Colors picked from the Nord theme [https://www.nordtheme.com/]
+COLORS_HEX = {0: "2e3440", 1: "ebcb8b"}
+RESOLUTION = (720, 1440)
+PADDING = 0
+
 ITERATIONS = 50
 POINTS = 500000
 
@@ -125,19 +130,16 @@ def hex2color(hex: str) -> Color:
 
 if __name__ == "__main__":
     # colors = {0: (46, 52, 64), 1: (76, 86, 106)}
-    colors_hex = {0: "2e3440", 1: "ebcb8b"}
-    res = (720, 1440)
-    padding = 0
-    size = 1.5 + 2 * padding
-    x, y = (-0.35 - padding, -0.55 - padding)
+    size = 1.5 + 2 * PADDING
+    x, y = (-0.35 - PADDING, -0.55 - PADDING)
 
-    high_res = (3 * res[0], 3 * res[1])
-    colors = {k: hex2color(v) for k, v in colors_hex.items()}
+    high_res = (3 * RESOLUTION[0], 3 * RESOLUTION[1])
+    colors = {k: hex2color(v) for k, v in COLORS_HEX.items()}
     min_window = ((x, x + size), (y, y + size))
     (a, b), (c, d) = size_window(min_window, high_res)
     xs = np.linspace(a, b, high_res[0])
     ys = np.linspace(c, d, high_res[1])
     ifs = make_golden_dragon()
     raster = make_raster(colors, (xs, ys), get_point, ifs)
-    im = Image.fromarray(raster).resize(res)
+    im = Image.fromarray(raster).resize(RESOLUTION)
     im.save("output.png")
