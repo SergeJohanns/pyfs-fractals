@@ -13,12 +13,12 @@ IFS_NAME = "levy_c_curve"
 COLORS_HEX = {0: "2e3440", 1: "ebcb8b"}
 RESOLUTION = (1000, 1000)
 PADDING = 0
+ZOOM = 3
 ITERATIONS = 50
 POINTS = 1000000
 
 # Internals
 IFS_PATH = "IFSs.{}"
-ZOOM = 3
 
 Color = tuple[int, int, int]
 Grid = tuple[np.ndarray, np.ndarray]
