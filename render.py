@@ -1,3 +1,4 @@
+from functools import wraps
 from importlib import import_module
 from random import choice, uniform
 from typing import Callable
@@ -37,6 +38,23 @@ def project(ifs: IteratedFunctionSystem, point: Vec) -> Vec:
     return curr
 
 
+def use_bar(title: str, items: int):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, quiet=False, **kwargs):
+            if quiet:
+                for _ in func(*args, **kwargs):
+                    pass
+            else:
+                with alive_bar(items, title=title) as bar:
+                    for _ in func(*args, **kwargs):
+                        bar()
+
+        return wrapper
+
+    return decorator
+
+
 def make_raster(
     colors: dict[int, Color],
     resolution: tuple[int, int],
@@ -59,6 +77,7 @@ def make_raster(
 
     points = set()
 
+    @use_bar("   Computing points:", POINTS)
     def compute_points():
         for _ in range(POINTS):
             x, y = get_point()
@@ -67,9 +86,13 @@ def make_raster(
             window.include(proj)
             yield
 
+    compute_points(quiet=quiet)
+
     x_res, y_res = resolution
     out = np.ndarray((y_res, x_res, 3), dtype=np.uint8)
+    cells = resolution[0] * resolution[1]
 
+    @use_bar("Initializing raster:", cells)
     def zero_init(resolution: tuple[int, int]):
         x_res, y_res = resolution
         for j in range(y_res):
@@ -77,6 +100,11 @@ def make_raster(
                 out[j, i] = colors[0]
                 yield
 
+    window.pad(padding, padding)
+    window.match_aspect_ratio(resolution)
+    zero_init(resolution, quiet=quiet)
+
+    @use_bar("     Drawing points:", POINTS)
     def draw_points(grid: Grid):
         for point in points:
             if point in grid.window:
@@ -84,28 +112,7 @@ def make_raster(
                 out[j, i] = colors[1]
             yield
 
-    if quiet:
-        for _ in compute_points():
-            pass
-        window.pad(padding, padding)
-        window.match_aspect_ratio(resolution)
-        for _ in zero_init(resolution):
-            pass
-        for _ in draw_points(Grid(window, resolution)):
-            pass
-    else:
-        with alive_bar(POINTS, title="   Computing points:") as bar:
-            for _ in compute_points():
-                bar()
-        window.pad(padding, padding)
-        window.match_aspect_ratio(resolution)
-        cells = resolution[0] * resolution[1]
-        with alive_bar(cells, title="Initializing raster:") as bar:
-            for _ in zero_init(resolution):
-                bar()
-        with alive_bar(POINTS, title="     Drawing points:") as bar:
-            for _ in draw_points(Grid(window, resolution)):
-                bar()
+    draw_points(Grid(window, resolution), quiet=quiet)
     return out
 
 
