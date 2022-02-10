@@ -24,21 +24,6 @@ IFS_PATH = "IFSs.{}"
 Color = tuple[int, int, int]
 
 
-def get_coordinates(grid: Grid, point: Vec) -> tuple[int, int]:
-    """Get the coordinates of the pixel corresponding to a given point.
-
-    :param grid: The grid of pixels to get coordinates in.
-    :param point: The point in the plane whose pixel to get.
-    :returns: The coordinates of the pixel in the grid that contains the point.
-    """
-    xs, ys = grid
-    x_step = (xs[-1] - xs[0]) / len(xs)
-    y_step = (ys[-1] - ys[0]) / len(ys)
-    x, y = point
-    i, j = ((x - xs[0]) // x_step, (y - ys[0]) // y_step)
-    return (int(i), len(ys) - int(j))
-
-
 def project(ifs: IteratedFunctionSystem, point: Vec) -> Vec:
     """Project a point by repeatedly applying functions from the IFS.
 
@@ -93,10 +78,9 @@ def make_raster(
                 yield
 
     def draw_points(grid: Grid):
-        (xs, ys) = grid
         for point in points:
-            i, j = get_coordinates(grid, point)
-            if 0 <= i < len(xs) and 0 <= j < len(ys):
+            if point in grid.window:
+                i, j = grid.get_coordinates(point)
                 out[j, i] = colors[1]
             yield
 
@@ -107,7 +91,7 @@ def make_raster(
         window.match_aspect_ratio(resolution)
         for _ in zero_init(resolution):
             pass
-        for _ in draw_points(window.get_grid(resolution)):
+        for _ in draw_points(Grid(window, resolution)):
             pass
     else:
         with alive_bar(POINTS, title="   Computing points:") as bar:
@@ -120,7 +104,7 @@ def make_raster(
             for _ in zero_init(resolution):
                 bar()
         with alive_bar(POINTS, title="     Drawing points:") as bar:
-            for _ in draw_points(window.get_grid(resolution)):
+            for _ in draw_points(Grid(window, resolution)):
                 bar()
     return out
 
