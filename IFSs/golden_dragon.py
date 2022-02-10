@@ -1,6 +1,6 @@
 import numpy as np
 
-from . import IFSModule, IteratedFunctionSystem, Map, Vec
+from . import IteratedFunctionSystem, Map, Vec
 
 
 def make_golden_dragon() -> IteratedFunctionSystem:
@@ -28,10 +28,5 @@ def make_golden_dragon() -> IteratedFunctionSystem:
     return [f1, f2]
 
 
-size = 1.5
-x, y = (-0.35, -0.55)
-min_window = ((x, x + size), (y, y + size))
-
-
-def get() -> IFSModule:
-    return make_golden_dragon(), min_window
+def get() -> IteratedFunctionSystem:
+    return make_golden_dragon()

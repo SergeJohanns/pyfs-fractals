@@ -1,4 +1,4 @@
-from . import IFSModule, IteratedFunctionSystem, Vec
+from . import IteratedFunctionSystem, Vec
 
 
 def make_levy_c_curve() -> IteratedFunctionSystem:
@@ -16,12 +16,5 @@ def make_levy_c_curve() -> IteratedFunctionSystem:
     return [f1, f2]
 
 
-height = 1.3
-y = -0.375
-width = 2.05
-x = 0.5
-min_window = ((x - width / 2, x + width / 2), (y - height / 2, y + height / 2))
-
-
-def get() -> IFSModule:
-    return make_levy_c_curve(), min_window
+def get() -> IteratedFunctionSystem:
+    return make_levy_c_curve()
