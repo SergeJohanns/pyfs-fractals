@@ -1,3 +1,10 @@
+# Emacs wants the HTML version in the root dir
 README.html
+
+# Avoid accidentally pushing the output files
+*.png
+!examples/*.png
+
+# Standard Python stuff
 __pycache__/
 *.pyc
