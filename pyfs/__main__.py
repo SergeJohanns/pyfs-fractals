@@ -7,7 +7,9 @@ import numpy as np
 from alive_progress import alive_bar
 from PIL import Image
 
-from IFSs import Grid, IteratedFunctionSystem, Vec, Window
+from fractals import IteratedFunctionSystem, Vec
+from grid import Grid
+from window import Window
 
 # Configuration
 IFS_NAME = "golden_dragon"
@@ -20,7 +22,7 @@ ITERATIONS = 50
 POINTS = 500000
 
 # Internals
-IFS_PATH = "IFSs.{}"
+IFS_PATH = "fractals.{}"
 
 Color = tuple[int, int, int]
 

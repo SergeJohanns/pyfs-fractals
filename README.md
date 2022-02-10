@@ -33,9 +33,9 @@ choosing the fractal and adjusting both the calculations and the visualization.
   long consider decreasing it.
 
 ### Adding a custom fractal
-To add a custom fractal, make a corresponding python module in `IFSs/`. Define a
-function `get` that returns an `IteratedFunctionSystem`, essentially a list of
-the functions from the IFS (see `IFSs/__init__.py` for an exact type
-definition). Additionally you can define any helper methods and variables
+To add a custom fractal, make a corresponding python module in `pyfs/fractals/`.
+Define a function `get` that returns an `IteratedFunctionSystem`, essentially a
+list of the functions from the IFS (see `pyfs/fractals/__init__.py` for an exact
+type definition). Additionally you can define any helper methods and variables
 required. To use it, just change `IFS_NAME` to the file name of the new fractal
 (without `.py`).
