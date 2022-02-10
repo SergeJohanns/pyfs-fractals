@@ -103,7 +103,7 @@ def make_raster(
     if quiet:
         for _ in compute_points():
             pass
-        window.pad(PADDING, PADDING)
+        window.pad(padding, padding)
         window.match_aspect_ratio(resolution)
         for _ in zero_init(resolution):
             pass
@@ -113,7 +113,7 @@ def make_raster(
         with alive_bar(POINTS, title="   Computing points:") as bar:
             for _ in compute_points():
                 bar()
-        window.pad(PADDING, PADDING)
+        window.pad(padding, padding)
         window.match_aspect_ratio(resolution)
         cells = resolution[0] * resolution[1]
         with alive_bar(cells, title="Initializing raster:") as bar:
