@@ -3,6 +3,7 @@ from random import choice, uniform
 from typing import Callable
 
 import numpy as np
+from alive_progress import alive_bar
 from PIL import Image
 
 from IFSs import IteratedFunctionSystem, Vec, Window
@@ -57,6 +58,7 @@ def make_raster(
     grid: Grid,
     get_point: Callable[[], Vec],
     ifs: IteratedFunctionSystem,
+    quiet=False,
 ) -> np.ndarray:
     """Create a raster image of the fractal.
 
@@ -64,22 +66,38 @@ def make_raster(
     :param grid: The axes of the grid the fractal should be rendered in.
     :param get_point: The distribution function for getting random points.
     :param ifs: The Iterated Function System that generates the fractal.
+    :param quiet: If True, do not perform any logging of progress.
     :returns: A raster image of the fractal within the given grid.
     """
     xs, ys = grid
     out = np.ndarray((len(ys), len(xs), 3), dtype=np.uint8)
-    for j in range(len(ys)):
-        for i in range(len(xs)):
-            out[j, i] = colors[0]
-    k = 0
-    for _ in range(POINTS):
-        x, y = get_point()
-        k += 1
-        proj = project(ifs, (x, y))
-        i, j = get_coordinates(grid, proj)
-        if 0 <= i < len(xs) and 0 <= j < len(ys):
-            out[j, i] = colors[1]
-    print(k)
+
+    def zero_init():
+        for j in range(len(ys)):
+            for i in range(len(xs)):
+                out[j, i] = colors[0]
+                yield
+
+    def add_points():
+        for i in range(POINTS):
+            x, y = get_point()
+            proj = project(ifs, (x, y))
+            i, j = get_coordinates(grid, proj)
+            if 0 <= i < len(xs) and 0 <= j < len(ys):
+                out[j, i] = colors[1]
+            yield
+
+    if quiet:
+        zero_init()
+        add_points()
+    else:
+        with alive_bar(len(xs) * len(ys), title="Initializing raster:") as bar:
+            for _ in zero_init():
+                bar()
+        with alive_bar(POINTS, title="     Drawing points:") as bar:
+            for _ in add_points():
+                bar()
+
     return out
 
 
@@ -96,7 +114,6 @@ def size_window(min_window: Window, dim: tuple[int, int]) -> Window:
     x, y = dim
     d_x = (b - a) / x
     d_y = (d - c) / y
-    print(d_x, d_y)
     d_width = ((d - c) * x / y - (b - a)) / 2 if d_x <= d_y else 0
     d_height = ((b - a) * y / x - (d - c)) / 2 if d_x > d_y else 0
     return (a - d_width, b + d_width), (c - d_height, d + d_height)
