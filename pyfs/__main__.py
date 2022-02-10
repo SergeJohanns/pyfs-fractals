@@ -88,8 +88,6 @@ def make_raster(
             window.include(proj)
             yield
 
-    compute_points(quiet=quiet)
-
     x_res, y_res = resolution
     out = np.ndarray((y_res, x_res, 3), dtype=np.uint8)
     cells = resolution[0] * resolution[1]
@@ -102,10 +100,6 @@ def make_raster(
                 out[j, i] = colors[0]
                 yield
 
-    window.pad(padding, padding)
-    window.match_aspect_ratio(resolution)
-    zero_init(resolution, quiet=quiet)
-
     @use_bar("     Drawing points:", POINTS)
     def draw_points(grid: Grid):
         for point in points:
@@ -114,6 +108,10 @@ def make_raster(
                 out[j, i] = colors[1]
             yield
 
+    compute_points(quiet=quiet)
+    window.pad(padding, padding)
+    window.match_aspect_ratio(resolution)
+    zero_init(resolution, quiet=quiet)
     draw_points(Grid(window, resolution), quiet=quiet)
     return out
 
