@@ -135,7 +135,7 @@ def hex2color(hex: str) -> Color:
 
 if __name__ == "__main__":
     ifs_module = import_module(IFS_PATH.format(IFS_NAME))
-    ifs, _ = ifs_module.get()
+    ifs = ifs_module.get()
     high_res = (ZOOM * RESOLUTION[0], ZOOM * RESOLUTION[1])
     colors = {k: hex2color(v) for k, v in COLORS_HEX.items()}
     raster = make_raster(colors, high_res, get_point, ifs, PADDING)
